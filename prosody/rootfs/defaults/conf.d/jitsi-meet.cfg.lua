@@ -32,17 +32,45 @@
 {{ $PROSODY_RESERVATION_ENABLED := .Env.PROSODY_RESERVATION_ENABLED | default "false" | toBool }}
 {{ $PROSODY_RESERVATION_REST_BASE_URL := .Env.PROSODY_RESERVATION_REST_BASE_URL | default "" }}
 
+local XMPP_AUTH_DOMAIN = "{{ $XMPP_AUTH_DOMAIN }}"
 admins = {
     "{{ $JICOFO_AUTH_USER }}@{{ $XMPP_AUTH_DOMAIN }}",
     "{{ $JVB_AUTH_USER }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- if .Env.JVB_AUTH_USER_LIST }}
+    {{- $userList := split .Env.JVB_AUTH_USER_LIST "," }}
+    {{- if gt (len $userList) 1 }}
+    {{- range $index, $element := $userList }}
+    "{{ $element }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- if lt (add $index 1) (len $userList) }},{{ end }}
+    {{- end }}
+    {{- else }}
+    "{{ .Env.JVB_AUTH_USER_LIST }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- end }}
+    {{- end }}
     "{{ $JVB_AUTH_USER_2 }}@{{ $XMPP_AUTH_DOMAIN }}"
+    
+
 }
 
 unlimited_jids = {
     "{{ $JICOFO_AUTH_USER }}@{{ $XMPP_AUTH_DOMAIN }}",
     "{{ $JVB_AUTH_USER }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- if .Env.JVB_AUTH_USER_LIST }}
+    {{- $userList := split .Env.JVB_AUTH_USER_LIST "," }}
+    {{- if gt (len $userList) 1 }}
+    {{- range $index, $element := $userList }}
+        "{{ $element }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- if lt (add $index 1) (len $userList) }},{{ end }}
+    {{- end }}
+    {{- else }}
+    "{{ .Env.JVB_AUTH_USER_LIST }}@{{ $XMPP_AUTH_DOMAIN }}",
+    {{- end }}
+    {{- end }}
     "{{ $JVB_AUTH_USER_2 }}@{{ $XMPP_AUTH_DOMAIN }}"
 }
+
+
+
 
 plugin_paths = { "/prosody-plugins/", "/prosody-plugins-custom" }
 

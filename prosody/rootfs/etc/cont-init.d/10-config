@@ -66,6 +66,13 @@ prosodyctl --config $PROSODY_CFG register $JVB_AUTH_USER $XMPP_AUTH_DOMAIN $JVB_
 prosodyctl --config $PROSODY_CFG register $JVB_AUTH_USER_2 $XMPP_AUTH_DOMAIN $JVB_AUTH_PASSWORD
 
 
+if [[ ! -z $JVB_AUTH_USER_LIST ]]; then
+    IFS=',' read -ra users <<< "$JVB_AUTH_USER_LIST"  # 将环境变量按逗号分隔为数组
+    for user in "${users[@]}"; do
+        prosodyctl --config $PROSODY_CFG register $user $XMPP_AUTH_DOMAIN $JVB_AUTH_PASSWORD
+        echo "JVB User Add to prosody user : $user" 
+    done
+fi
 
 if [[ ! -z $JIBRI_XMPP_PASSWORD ]]; then
     OLD_JIBRI_XMPP_PASSWORD=passw0rd

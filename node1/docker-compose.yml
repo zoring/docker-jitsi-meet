@@ -5,13 +5,20 @@ services:
 # Video bridge
     jvb2:
         image: jitsi/jvb:${JITSI_IMAGE_VERSION:-stable-7439}
+        deploy:
+                placement:
+                        constraints: [node.hostname == ouyangjinhang.org]
         restart: ${RESTART_POLICY:-unless-stopped}
         ports:
-            - '${JVB_PORT:-10001}:${JVB_PORT:-10001}/udp'
-            - '127.0.0.1:${JVB_COLIBRI_PORT:-8081}:8081'
-        volumes:
-            - ${CONFIG}/jvb2:/config:Z
-            - /home/ctyun/docker-jitsi-meet/jvb/rootfs/defaults:/defaults:z
+             - target: ${JVB_PORT:-10001}
+               published: ${JVB_PORT:-10001}
+               protocol: udp
+             - target: 8081
+               published: ${JVB_COLIBRI_PORT:-8081}
+               protocol: tcp
+        configs:
+            - source: my_config
+              target: /defaults/jvb.conf
         environment:
             - DOCKER_HOST_ADDRESS
             - ENABLE_COLIBRI_WEBSOCKET
@@ -51,8 +58,12 @@ services:
 
 
     
+configs:
+   my_config:
+         file: /home/ctyun/docker-jitsi-meet/jvb/rootfs/defaults/jvb.conf
 
 # Custom network so all services can communicate using a FQDN
 networks:
       my-overlay-network:
               external: true
+                  
