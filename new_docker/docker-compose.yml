@@ -8,7 +8,8 @@ services:
         restart: ${RESTART_POLICY:-unless-stopped}
         ports:
             - '${JVB_PORT:-10001}:${JVB_PORT:-10001}/udp'
-            - '127.0.0.1:${JVB_COLIBRI_PORT:-8081}:8081'
+            - '127.0.0.1:${JVB_COLIBRI_PORT:-8080}:8080'
+            - '${JVB_OCTO_BIND_PORT:-15000}:${JVB_OCTO_BIND_PORT:-15000}'
         volumes:
             - ${CONFIG}/jvb2:/config:Z
             - /home/ctyun/docker-jitsi-meet/jvb/rootfs/defaults:/defaults:z
@@ -45,14 +46,12 @@ services:
             - XMPP_SERVER
             - XMPP_PORT
         networks:
-            my-overlay-network:
-                 aliases:
-                    - ${JVB_AUTH_USER}
+            ouyang:
 
 
     
 
 # Custom network so all services can communicate using a FQDN
 networks:
-      my-overlay-network:
+      ouyang:
               external: true
