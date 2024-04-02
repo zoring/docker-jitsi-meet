@@ -13,9 +13,11 @@ services:
              - target: ${JVB_PORT:-10001}
                published: ${JVB_PORT:-10001}
                protocol: udp
+               mode: host
              - target: 8081
                published: ${JVB_COLIBRI_PORT:-8081}
                protocol: tcp
+               mode: host
         configs:
             - source: my_config
               target: /defaults/jvb.conf
@@ -65,5 +67,4 @@ configs:
 # Custom network so all services can communicate using a FQDN
 networks:
       my-overlay-network:
-              external: true
-                  
+              external: true       
